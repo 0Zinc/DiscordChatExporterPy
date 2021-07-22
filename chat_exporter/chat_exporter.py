@@ -220,7 +220,7 @@ class Message:
             self.attachments += await BuildAttachment(a, self.guild).flow()
 
         # discordpy beta
-        if hasattr(self.message, "components"):
+        if discord.version_info.major == 2:
             for c in self.message.components:
                 self.components += await BuildComponents(c, self.guild).flow()
 
