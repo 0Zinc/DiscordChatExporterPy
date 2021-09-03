@@ -16,9 +16,10 @@ from chat_exporter.build_components import BuildComponents
 from chat_exporter.build_reaction import BuildReaction
 from chat_exporter.build_html import fill_out, start_message, bot_tag, message_reference, message_reference_unknown, \
     message_content, message_body, end_message, total, PARSE_MODE_NONE, PARSE_MODE_MARKDOWN, PARSE_MODE_REFERENCE, \
-    img_attachment
+    img_attachment, message_pin, message_thread
 from chat_exporter.parse_mention import pass_bot
 
+from chat_exporter.cache import clear_cache
 
 bot = None
 
@@ -144,11 +145,13 @@ class Transcript:
         message_html = ""
 
         for m in self.messages:
-            message_html += await Message(m, previous_message, self.timezone_string).build_message()
-            previous_message = m
+            message_html += await Message(m, previous_message, self.timezone_string).build_input()
+            previous_message = m if "pins_add" not in str(m.type) and "thread_created" not in str(m.type)\
+                and m.type != 18 else None
 
         await self.build_guild(message_html)
 
+        clear_cache()
         return self
 
     async def build_guild(self, message_html):
@@ -160,7 +163,7 @@ class Transcript:
             guild_icon = self.guild.icon
 
         if not guild_icon or len(guild_icon) < 2:
-            guild_icon = "https://discord.com/assets/1f0bfc0865d324c2587920a7d80c609b.png"
+            guild_icon = "https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/discord-default.png"
 
         guild_name = html.escape(self.guild.name)
 
@@ -205,14 +208,59 @@ class Message:
 
         self.time_string_create, self.time_string_edit = self.set_time()
 
-    async def build_message(self):
+    async def build_input(self):
         self.message.content = html.escape(self.message.content)
         self.message.content = re.sub(r"\n", "<br>", self.message.content)
 
+        if "pins_add" in str(self.message.type):
+            await self.build_pin()
+            return self.message_html
+
+        elif "thread_created" in str(self.message.type) or self.message.type == 18:
+            await self.build_thread()
+            return self.message_html
+
+        else:
+            await self.build_message()
+            return self.message_html
+
+    async def build_pin(self):
+        await self.generate_message_divider(channel_audit=True)
+        await self.build_pin_template()
+
+    async def build_thread(self):
+        await self.generate_message_divider(channel_audit=True)
+        await self.build_thread_template()
+
+    async def build_message(self):
         await self.build_content()
         await self.build_reference()
         await self.build_sticker()
+        await self.build_assets()
+        await self.build_message_template()
 
+    async def build_pin_template(self):
+        self.message_html += await fill_out(self.guild, message_pin, [
+            ("PIN_URL", "https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/discord-pinned.svg", PARSE_MODE_NONE),
+            ("USER_COLOUR", self.user_colour_translate(self.message.author)),
+            ("NAME", str(html.escape(self.message.author.display_name))),
+            ("NAME_TAG", "%s#%s" % (self.message.author.name, self.message.author.discriminator), PARSE_MODE_NONE),
+            ("MESSAGE_ID", str(self.message.id), PARSE_MODE_NONE),
+            ("REF_MESSAGE_ID", str(self.message.reference.message_id), PARSE_MODE_NONE)
+        ])
+
+    async def build_thread_template(self):
+        self.message_html += await fill_out(self.guild, message_thread, [
+            ("THREAD_URL", "https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/discord-thread.svg",
+             PARSE_MODE_NONE),
+            ("THREAD_NAME", self.message.content, PARSE_MODE_NONE),
+            ("USER_COLOUR", self.user_colour_translate(self.message.author)),
+            ("NAME", str(html.escape(self.message.author.display_name))),
+            ("NAME_TAG", "%s#%s" % (self.message.author.name, self.message.author.discriminator), PARSE_MODE_NONE),
+            ("MESSAGE_ID", str(self.message.id), PARSE_MODE_NONE),
+        ])
+
+    async def build_assets(self):
         for e in self.message.embeds:
             self.embeds += await BuildEmbed(e, self.guild).flow()
 
@@ -233,6 +281,7 @@ class Message:
         if self.components:
             self.components = f'<div class="chatlog__components">{self.components}</div>'
 
+    async def build_message_template(self):
         await self.generate_message_divider()
 
         self.message_html += await fill_out(self.guild, message_body, [
@@ -246,23 +295,29 @@ class Message:
 
         return self.message_html
 
-    async def generate_message_divider(self):
-        if self.previous_message is None or self.message.reference != "" or \
-                self.previous_message.author.id != self.message.author.id or \
-                self.message.created_at > (self.previous_message.created_at + timedelta(minutes=4)):
+    def _generate_message_divider_check(self):
+        return bool(
+            self.previous_message is None or self.message.reference != "" or
+            self.previous_message.author.id != self.message.author.id or self.message.webhook_id is not None or
+            self.message.created_at > (self.previous_message.created_at + timedelta(minutes=4))
+        )
 
+    async def generate_message_divider(self, channel_audit=False):
+        if channel_audit or self._generate_message_divider_check():
             if self.previous_message is not None:
                 self.message_html += await fill_out(self.guild, end_message, [])
 
-            user_colour = self.user_colour_translate(self.message.author)
+            if channel_audit:
+                return
 
+            user_colour = self.user_colour_translate(self.message.author)
             is_bot = self.check_if_bot(self.message)
 
             # discordpy beta
             if hasattr(self.message.author, "avatar_url"):
                 avatar_url = str(self.message.author.avatar_url)
             else:
-                avatar_url = str(self.message.author.avatar)
+                avatar_url = str(self.message.author.display_avatar)
 
             self.message_html += await fill_out(self.guild, start_message, [
                 ("REFERENCE", self.message.reference, PARSE_MODE_NONE),
@@ -291,19 +346,16 @@ class Message:
         ])
 
     async def build_sticker(self):
-        if not self.message.stickers:
+        if not self.message.stickers or not hasattr(self.message.stickers[0], "url"):
             return
 
-        # discordpy beta
-        if hasattr(self.message.stickers[0], "image_url"):
-            sticker_image_url = self.message.stickers[0].image_url
-        else:
-            sticker_image_url = self.message.stickers[0].image
+        sticker_image_url = self.message.stickers[0].url
 
-        if sticker_image_url is None:
+        if sticker_image_url.endswith(".json"):
+            sticker = await self.message.stickers[0].fetch()
             sticker_image_url = (
                 f"https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/stickers/"
-                f"{self.message.stickers[0].pack_id}/{self.message.stickers[0].id}.gif"
+                f"{sticker.pack_id}/{sticker.id}.gif"
             )
 
         self.message.content = await fill_out(self.guild, img_attachment, [

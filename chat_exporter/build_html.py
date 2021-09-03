@@ -24,14 +24,13 @@ async def fill_out(guild, base, replacements):
         if mode != PARSE_MODE_NONE:
             v = ParseMention(v, guild).flow()
         if mode == PARSE_MODE_MARKDOWN:
-            v = ParseMarkdown(v).standard_message_flow()
+            v = await ParseMarkdown(v).standard_message_flow()
         elif mode == PARSE_MODE_EMBED:
-            v = ParseMarkdown(v).standard_embed_flow()
+            v = await ParseMarkdown(v).standard_embed_flow()
         elif mode == PARSE_MODE_SPECIAL_EMBED:
-            v = ParseMarkdown(v).special_embed_flow()
+            v = await ParseMarkdown(v).special_embed_flow()
         elif mode == PARSE_MODE_REFERENCE:
-            v = ParseMarkdown(v).message_reference_flow()
-            pass
+            v = await ParseMarkdown(v).message_reference_flow()
 
         base = base.replace("{{" + k + "}}", v)
 
@@ -49,6 +48,8 @@ start_message = read_file(dir_path + "/chat_exporter_html/message/start.html")
 bot_tag = read_file(dir_path + "/chat_exporter_html/message/bot-tag.html")
 message_content = read_file(dir_path + "/chat_exporter_html/message/content.html")
 message_reference = read_file(dir_path + "/chat_exporter_html/message/reference.html")
+message_pin = read_file(dir_path + "/chat_exporter_html/message/pin.html")
+message_thread = read_file(dir_path + "/chat_exporter_html/message/thread.html")
 message_reference_unknown = read_file(dir_path + "/chat_exporter_html/message/reference_unknown.html")
 message_body = read_file(dir_path + "/chat_exporter_html/message/message.html")
 end_message = read_file(dir_path + "/chat_exporter_html/message/end.html")
@@ -77,6 +78,7 @@ custom_emoji = read_file(dir_path + "/chat_exporter_html/reaction/custom_emoji.h
 img_attachment = read_file(dir_path + "/chat_exporter_html/attachment/image.html")
 msg_attachment = read_file(dir_path + "/chat_exporter_html/attachment/message.html")
 audio_attachment = read_file(dir_path + "/chat_exporter_html/attachment/audio.html")
+video_attachment = read_file(dir_path + "/chat_exporter_html/attachment/video.html")
 
 # GUILD / FULL TRANSCRIPT
 total = read_file(dir_path + "/chat_exporter_html/base.html")
