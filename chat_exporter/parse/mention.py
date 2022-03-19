@@ -13,14 +13,6 @@ def pass_bot(_bot):
     bot = _bot
 
 
-bot = None
-
-
-def pass_bot(_bot):
-    global bot
-    bot = _bot
-
-
 class ParseMention:
     REGEX_ROLES = r"&lt;@&amp;([0-9]+)&gt;"
     REGEX_ROLES_2 = r"<@&([0-9]+)>"
@@ -39,12 +31,12 @@ class ParseMention:
         self.content = content
         self.guild = guild
 
-    async def flow(self):
+    def flow(self):
         self.escape_mentions()
         self.escape_mentions()
         self.unescape_mentions()
         self.channel_mention()
-        await self.member_mention()
+        self.member_mention()
         self.role_mention()
 
         return self.content
@@ -108,7 +100,7 @@ class ParseMention:
 
                 match = re.search(regex, self.content)
 
-    async def member_mention(self):
+    def member_mention(self):
         holder = self.REGEX_MEMBERS, self.REGEX_MEMBERS_2
         for regex in holder:
             match = re.search(regex, self.content)

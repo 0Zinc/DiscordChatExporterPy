@@ -2,17 +2,7 @@ import io
 from typing import List, Optional
 
 from chat_exporter.construct.transcript import Transcript
-from chat_exporter.parse.mention import pass_bot
 from chat_exporter.ext.discord_import import discord
-
-
-bot = None
-
-
-def init_exporter(_bot):
-    global bot
-    bot = _bot
-    pass_bot(bot)
 
 
 async def quick_export(
