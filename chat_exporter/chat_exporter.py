@@ -18,6 +18,7 @@ def init_exporter(_bot):
 async def quick_export(
     channel: discord.TextChannel,
     guild: Optional[discord.Guild] = None,
+    bot: Optional[discord.Client] = None,
 ):
     if guild:
         channel.guild = guild
@@ -28,6 +29,7 @@ async def quick_export(
             limit=None,
             messages=None,
             pytz_timezone="UTC",
+            bot=bot,
             ).export()
         ).html
 
@@ -48,6 +50,7 @@ async def export(
     limit: Optional[int] = None,
     tz_info="UTC",
     guild: Optional[discord.Guild] = None,
+    bot: Optional[discord.Client] = None,
 ):
     if guild:
         channel.guild = guild
@@ -58,6 +61,7 @@ async def export(
             limit=limit,
             messages=None,
             pytz_timezone=tz_info,
+            bot=bot,
         ).export()
     ).html
 
@@ -67,6 +71,7 @@ async def raw_export(
     messages: List[discord.Message],
     tz_info="UTC",
     guild: Optional[discord.Guild] = None,
+    bot: Optional[discord.Client] = None,
 ):
     if guild:
         channel.guild = guild
@@ -77,5 +82,6 @@ async def raw_export(
             limit=None,
             messages=messages,
             pytz_timezone=tz_info,
+            bot=bot,
         ).export()
     ).html
