@@ -8,81 +8,33 @@
 
     <style>
         @font-face {
-          font-family: Ginto;
-          font-weight: 300;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-300.woff) format("woff")
-        }
-
-        @font-face {
-          font-family: Ginto;
+          font-family: gg sans;
           font-weight: 400;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-400.woff) format("woff")
+          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/ggsans-400.woff2) format("woff2")
         }
 
         @font-face {
-          font-family: Ginto;
+          font-family: gg sans;
           font-weight: 500;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-500.woff) format("woff")
+          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/ggsans-500.woff2) format("woff2")
         }
 
         @font-face {
-          font-family: Ginto;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-600.woff) format("woff");
+          font-family: gg sans;
           font-weight: 600;
+          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/ggsans-600.woff2) format("woff2")
         }
 
         @font-face {
-          font-family: Ginto;
+          font-family: gg sans;
           font-weight: 700;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-700.woff) format("woff")
+          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/ggsans-700.woff2) format("woff2")
         }
 
         @font-face {
-          font-family: Ginto;
-          font-weight: 500;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-Nord-500.woff2) format("woff2"), url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-Nord-500.woff) format("woff")
-        }
-
-        @font-face {
-          font-family: Ginto;
-          font-weight: 600;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-Nord-600.woff2) format("woff2"), url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-Nord-600.woff) format("woff")
-        }
-
-        @font-face {
-          font-family: Ginto;
-          font-weight: 700;
-          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-Nord-700.woff2) format("woff2"), url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/Ginto-Nord-700.woff) format("woff")
-        }
-
-        @font-face {
-            font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/whitney-300.woff);
-            font-weight: 300;
-        }
-
-        @font-face {
-            font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/whitney-400.woff);
-            font-weight: 400;
-        }
-
-        @font-face {
-            font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/whitney-500.woff);
-            font-weight: 500;
-        }
-
-        @font-face {
-            font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/whitney-600.woff);
-            font-weight: 600;
-        }
-
-        @font-face {
-            font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/whitney-700.woff);
-            font-weight: 700;
+          font-family: gg sans;
+          font-weight: 800;
+          src: url(https://cdn.jsdelivr.net/gh/mahtoid/DiscordUtils@master/ggsans-800.woff2) format("woff2")
         }
 
         a {
@@ -181,6 +133,10 @@
 
         .pre {
             font-family: "Consolas", "Courier New", Courier, monospace;
+            padding: .2em;
+            margin: -.2em 0;
+            border-radius: 3px;
+            font-size: 85%;
         }
 
         .pre--multiline {
@@ -224,7 +180,6 @@
         .emoji--small {
             width: 1em;
             height: 1em;
-            padding-bottom: 4px;
         }
 
         .emoji--large {
@@ -312,6 +267,10 @@
             font-weight: 600;
         }
 
+        .chatlog__followup-author:hover {
+            text-decoration: underline;
+        }
+
         .chatlog__followup-content {
             user-select: none;
             overflow: hidden;
@@ -354,11 +313,13 @@
         
         .chatlog__reference-edited-timestamp {
             margin-left: 0.25rem;
-            color: #a3a6aa;
-            font-size: 0.75rem;
-            font-weight: 500;
+            color: #9599a2;
+            font-size: 0.625rem;
+            font-weight: 400;
+            line-height: 1;
             direction: ltr;
             unicode-bidi: bidi-override;
+            user-select: none;
         }
 
         .chatlog__reference-attachment-icon {
@@ -391,9 +352,19 @@
             cursor: pointer;
         }
 
+        .chatlog__reference-name {
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .chatlog__reference-name:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
         .chatlog__timestamp {
             margin-left: 0.3rem;
-            color: #a3a6aa;
+            color: #9599a2;
             font-size: 0.75rem;
             font-weight: 500;
             direction: ltr;
@@ -662,6 +633,36 @@
             margin-top: 0;
         }
 
+        .markup {
+            white-space: normal;
+        }
+
+        .markup ul {
+            margin: 4px 0 0 16px;
+            margin-block-start: 0;
+            margin-block-end: 0;
+            padding-inline-start: 0;
+            list-style-position: outside;
+            list-style-type: circle;
+        }
+
+        .markup ul ul {
+            list-style-type: circle;
+            margin-bottom: 0;
+        }
+
+        .markup li {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-weight: inherit;
+            font-style: inherit;
+            font-family: inherit;
+            font-size: 100%;
+            vertical-align: baseline;
+        }
+
+
         .meta__details .chatlog__bot-tag {
             margin-left: 1ch;
         }
@@ -680,7 +681,7 @@
             height: 100%;
             width: 100%;
             background-color: #36393f;
-            font-family: "Whitney";
+            font-family: "gg sans", Helvetica, Arial, sans-serif;
             font-size: 17px;
             color: #fff;
             margin: 0;
@@ -781,14 +782,6 @@
             text-decoration: underline;
         }
 
-        .chatlog__reference-edited-timestamp {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        .chatlog__timestamp {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
         .chatlog__message--highlighted {
             background-color: rgba(114, 137, 218, 0.2) !important;
         }
@@ -828,11 +821,10 @@
             display: flex;
             flex-shrink: 0;
             align-items: center;
-            height: 48px;
+            padding: 6px 0 6px 0;
             user-select: none;
-            font-family: "Ginto";
-            font-weight: 500;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 20px;
             box-shadow: 0 1px 0 rgba(4, 4, 5, 0.2), 0 1.5px 0 rgba(6, 6, 7, 0.05), 0 2px 0 rgba(4, 4, 5, 0.05);
         }
 
@@ -851,7 +843,13 @@
             color: #b9bbbe;
             margin-left: 10px;
             padding-left: 10px;
-            font-family: 'Whitney';
+            font-size: 14px;
+            line-height: 18px;
+            height: 18px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
         }
 
         .panel__summary-button {
@@ -920,12 +918,11 @@
             justify-content: flex-end;
             flex-shrink: 0;
             user-select: none;
-            font-family: "Ginto";
         }
 
         .info__title {
-            font-size: 30px;
-            font-weight: 500;
+            font-size: 32px;
+            font-weight: 700;
             line-height: 40px;
         }
 
@@ -933,7 +930,6 @@
             color: #b9bbbe;
             font-size: 16px;
             line-height: 20px;
-            font-family: "Whitney";
         }
 
         .info__channel-message-count {
@@ -958,8 +954,10 @@
         .footer__text {
             font-size: 16px;
             line-height: 20px;
-            font-family: 'Ginto';
             font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         #context-menu {
@@ -1068,7 +1066,6 @@
             opacity: 0.9;
             text-overflow: ellipsis;
             overflow: hidden;
-            font-family: 'Ginto';
             font-size: 12px;
         }
 
@@ -1077,14 +1074,12 @@
             color: #fff;
             text-overflow: ellipsis;
             overflow: hidden;
-            font-family: 'Ginto';
         }
 
         .meta__discriminator {
             font-weight: 500;
             color: #fff;
             opacity: .6;
-            font-family: 'Ginto';
         }
 
         .meta-popout .meta__header .bot {
@@ -1226,6 +1221,28 @@
         .chatlog__component-dropdown-border {
           border-bottom-left-radius: 0px;
           border-bottom-right-radius: 0px;
+        }
+
+        .tippy-box[data-theme~='disc'] {
+            font-weight: 600;
+            background-color: #111214;
+            color: #dfe0e4;
+        }
+
+        .tippy-box[data-theme~='disc'][data-placement^='top'] > .tippy-arrow::before {
+          border-top-color: #111214;
+        }
+
+        .tippy-box[data-theme~='disc'][data-placement^='left'] > .tippy-arrow::before {
+          border-left-color: #111214;
+        }
+
+        .tippy-box[data-theme~='disc'][data-placement^='bottom'] > .tippy-arrow::before {
+          border-bottom-color: #111214;
+        }
+
+        .tippy-box[data-theme~='disc'][data-placement^='right'] > .tippy-arrow::before {
+          border-right-color: #111214;
         }
 
         .dropdownContentDesc { color: #999B9E; }
@@ -1532,6 +1549,20 @@
 
     <!-- Timestamps: Tooltips -->
     tippy('.chatlog__timestamp', {
+        placement: 'top',
+        animation: 'fade',
+        content: (reference) => reference.getAttribute('data-timestamp'),
+        theme: 'disc',
+    });
+
+    tippy('.chatlog__short-timestamp', {
+        placement: 'top',
+        animation: 'fade',
+        content: (reference) => reference.getAttribute('data-timestamp'),
+        theme: 'disc',
+    });
+
+    tippy('.chatlog__reference-edited-timestamp', {
         placement: 'top',
         animation: 'fade',
         content: (reference) => reference.getAttribute('data-timestamp'),
